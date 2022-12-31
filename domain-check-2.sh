@@ -1026,8 +1026,8 @@ print_heading()
     if [ "${QUIET}" != "TRUE" ]
     then
         if [ "${OUTPUT_FORMAT}" == "format" ]; then
-            printf "\n%-35s %-46s %-8s %-11s %-5s\n" "Domain" "Registrar" "Status" "Expires" "Days Left"
-            echo "----------------------------------- ---------------------------------------------- -------- ----------- ---------"
+            printf "\n%-25s %-20s %-8s %-11s %-5s\n" "Domain" "Registrar" "Status" "Expires" "Days Left"
+            echo -e "\e[1;33m------------------------- -------------------- -------- ----------- ---------\e[0m"
         fi
         if [ "${OUTPUT_FORMAT}" == "csv" ]; then
             printf "%s${CSV_DELIMITER}" "Domain" "Registrar" "Status" "Expires" "\"Days Left\"" | ${SED} "s/${CSV_DELIMITER}$//"
@@ -1047,11 +1047,17 @@ print_heading()
 #####################################################################
 prints()
 {
+    if [ $2 = "Valid" ]; then
+        CS="\e[1;32m"
+    else
+        CS="\e[1;31m"
+    fi
+
     if [ "${QUIET}" != "TRUE" ]
     then
         local MIN_DATE=$(${ECHO} $3 | ${AWK} '{ print $1, $2, $4 }' | ${TR} -d " " )
         if [ "${OUTPUT_FORMAT}" == "format" ]; then
-            printf "%-35s %-46s %-8s %-11s %-5s\n" "$1" "$5" "$2" "${MIN_DATE}" "$4"
+            printf "%-25s %-20s ${CS}%-8s\e[0m %-8s %-5s\n" "$1" "$5" "$2" "${MIN_DATE}" "$4"
         fi
         if [ "${OUTPUT_FORMAT}" == "csv" ]; then
             printf "%s${CSV_DELIMITER}" "$1" "\"$5\"" "$2" "${MIN_DATE}" "$4" | ${SED} "s/${CSV_DELIMITER}$//"
